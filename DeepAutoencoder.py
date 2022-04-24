@@ -1,42 +1,15 @@
-from cv2 import transform
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 import torchvision
 import torch
 
+
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
-# Creating a DeepAutoencoder class
-class DeepAutoencoder(torch.nn.Module):
-	def __init__(self):
-		super().__init__()		
-		self.encoder = torch.nn.Sequential(
-			torch.nn.Linear(imageSize * imageSize, 256),
-			torch.nn.ReLU(),
-			torch.nn.Linear(256, 128),
-			torch.nn.ReLU(),
-			torch.nn.Linear(128, 64),
-			torch.nn.ReLU(),
-			torch.nn.Linear(64, 10)
-		)
-		
-		self.decoder = torch.nn.Sequential(
-			torch.nn.Linear(10, 64),
-			torch.nn.ReLU(),
-			torch.nn.Linear(64, 128),
-			torch.nn.ReLU(),
-			torch.nn.Linear(128, 256),
-			torch.nn.ReLU(),
-			torch.nn.Linear(256, imageSize * imageSize),
-			torch.nn.Sigmoid()
-		)
-
-	def forward(self, x):
-		encoded = self.encoder(x)
-		decoded = self.decoder(encoded)
-		return decoded
+from deepAutoEncoderClass import DeepAutoencoder
 
 # Instantiating the model and hyperparameters
 imageSize = 500;
@@ -44,6 +17,7 @@ model = DeepAutoencoder()
 criterion = torch.nn.MSELoss()
 num_epochs = 100
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
 
 from datasetClass import myDataset
 dataset = myDataset(csv_file = "nonSegmentedImageset.csv", root_dir='cityDataset', transform=transforms.ToTensor())
@@ -56,6 +30,13 @@ test_loader = DataLoader(dataset = test_dataset, batch_size = batch_size, shuffl
 # Printing 25 random images from the training dataset
 random_samples = np.random.randint(
 	1, len(train_dataset), (25))
+
+img = train_dataset[0][0][0]
+temp = img.reshape(-1, imageSize * imageSize)
+
+a = model.getEncoded(temp)
+print(a)
+
 
 for idx in range(random_samples.shape[0]):
 	plt.subplot(5, 5, idx + 1)
@@ -221,11 +202,4 @@ plt.tight_layout()
 plt.show()
 
 
-
-
-
-
-
-
-
-
+torch.save(model, "savedModels/newModel.pt")
