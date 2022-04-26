@@ -8,22 +8,22 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 
-model = torch.load("savedModels/newModel.pt")
+model = torch.load("newModel.pt")
 model.eval()
 
 
 
 from datasetClass import myDataset
-dataset = myDataset(csv_file = "nonSegmentedImageset.csv", root_dir='cityDataset', transform=transforms.ToTensor())
+dataset = myDataset(csv_file = "SegmentedImageset.csv", root_dir='itemDataset', transform=transforms.ToTensor())
 
 batch_size = 32;
-train_dataset, test_dataset = torch.utils.data.random_split(dataset, [800, 200])
+train_dataset, test_dataset = torch.utils.data.random_split(dataset, [417, 105])
 train_loader = DataLoader(dataset = train_dataset, batch_size = batch_size, shuffle = True);
 test_loader = DataLoader(dataset = test_dataset, batch_size = batch_size, shuffle = True);
 
 encodedData = []
 imageSize = 500
-for idx in range(800):
+for idx in range(417):
     entry = train_dataset[idx][0][0].reshape(-1, imageSize * imageSize)
     encodedData.append(model.getEncoded(entry).detach().numpy())
 
@@ -39,7 +39,7 @@ for entry in temp:
 plt.scatter(x, y, z)
 
 encodedData = []
-for idx in range(200):
+for idx in range(105):
     entry = test_dataset[idx][0][0].reshape(-1, imageSize * imageSize)
     encodedData.append(model.getEncoded(entry).detach().numpy())
 

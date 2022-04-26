@@ -20,10 +20,10 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 
 from datasetClass import myDataset
-dataset = myDataset(csv_file = "nonSegmentedImageset.csv", root_dir='cityDataset', transform=transforms.ToTensor())
+dataset = myDataset(csv_file = "SegmentedImageset.csv", root_dir='itemDataset', transform=transforms.ToTensor())
 
 batch_size = 32;
-train_dataset, test_dataset = torch.utils.data.random_split(dataset, [800, 200])
+train_dataset, test_dataset = torch.utils.data.random_split(dataset, [417, 105])
 train_loader = DataLoader(dataset = train_dataset, batch_size = batch_size, shuffle = True);
 test_loader = DataLoader(dataset = test_dataset, batch_size = batch_size, shuffle = True);
 
@@ -95,7 +95,9 @@ for epoch in range(num_epochs):
 	# reconstructed outputs for the last batch
 	outputs[epoch+1] = {'img': img, 'out': out}
 
+torch.save(model, "newModel.pt")
 
+'''
 # Plotting the training loss
 plt.plot(range(1,num_epochs+1),train_loss)
 plt.xlabel("Number of epochs")
@@ -120,7 +122,7 @@ for val in epochs_list:
 	title_text = f"Epoch = {val}"
 	
 	# Plotting first five images of the last batch
-	for idx in range(5):
+	for idx in range(3):
 		plt.subplot(7, 5, counter)
 		plt.title(title_text)
 		plt.imshow(temp[idx].reshape(imageSize, imageSize), cmap= 'gray')
@@ -200,6 +202,4 @@ for idx in range(10):
 
 plt.tight_layout()
 plt.show()
-
-
-torch.save(model, "savedModels/newModel.pt")
+'''
